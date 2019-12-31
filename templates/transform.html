@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ETL Process</title>
+
+
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type = "text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type = "text/javascript"  src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script type = "text/javascript"  src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script type = "text/javascript"  src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3>Flask ETL process APP</h3>
+                        <hr class="my-5"/>
+                        <form method="POST">
+                            <button class="btn btn-success">Extract</button>
+                        </form>
+                        <hr class="my-5"/>
+                        <table id="extract-table" class="display responsvive text-left mt-5" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th>MIASTO</th>
+                                    <th>POKOJE</th>
+                                    <th>CENA</th>
+                                    <th>POWIERZCHNIA</th>
+                                    <th>CENA ZA MKW</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if request.method == 'POST' %}
+                                    {% for row in transformed %}
+                                        <tr>
+                                            <td>{{ row.location }}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        {% if request.method == 'GET' %}
+                            <div class="mt-4">Brak danych. Aby uzyskać jakiekolwiek, wybierz "Extract".</div>
+                        {% endif %}
+                        <script type="text/javascript">
+                            $(document).ready( function () {
+                                $('#extract-table').DataTable();
+                            } );
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>
+</body>
