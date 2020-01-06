@@ -20,20 +20,12 @@
         <div class="row">
             <div class="col">
                 <div class="card">
-                    <div class="card-body">
-                        <h3 class="text-center">Flask ETL process APP</h3>
+                    <div class="card-body text-center">
+                        <h3>Flask ETL process APP</h3>
                         <hr class="my-5"/>
-                        <div class="row">
-                            <form action="/" method="GET">
-                                <button style="margin-right: 15px; margin-left: 15px" class="btn btn-success">Strona główna</button>
-                            </form>
-{#                            <form action="/extract" method="POST">#}
-{#                                <button style="margin-right: 15px; margin-left: 15px" class="btn btn-success">Ponów Extract</button>#}
-{#                            </form>#}
-                            <form action="/transform" method="POST">
-                                <button class="btn btn-success ">Transform</button>
-                            </form>
-                        </div>
+                        <form action="/" method="GET">
+                            <button class="btn btn-success">Strona główna</button>
+                        </form>
                         <hr class="my-5"/>
                         <table id="extract-table" class="display responsvive text-left mt-5" style="width: 100%">
                             <thead>
@@ -46,13 +38,12 @@
                             </thead>
                             <tbody>
                                 {% if request.method == 'POST' %}
-                                    {% for row in extracted %}
+                                    {% for rows in results %}
                                         <tr>
-                                            <td>{{ row.location }}</td>
-                                            <td>{{ row.rooms }}</td>
-                                            <td>{{ row.price }}</td>
-                                            <td>{{ row.area }}</td>
-
+                                            <td>{% for row in rows.location %} {{ row }} {% endfor %}</td>
+                                            <td>{% for row in rows.rooms %} {{ row }} {% endfor %}</td>
+                                            <td>{%  for row in rows.price %} {{ row }} {% endfor %}</td>
+                                            <td>{%  for row in rows.area %} {{ row }} {% endfor %}</td>
                                         </tr>
                                     {% endfor %}
                                 {% endif %}
@@ -61,7 +52,6 @@
                         {% if request.method == 'GET' %}
                             <div class="mt-4">Brak danych. Aby uzyskać jakiekolwiek, wybierz "Extract".</div>
                         {% endif %}
-                        <a href="/download" class="btn btn-primary">POBIERZ</a>
                         <script type="text/javascript">
                             $(document).ready( function () {
                                 $('#extract-table').DataTable();

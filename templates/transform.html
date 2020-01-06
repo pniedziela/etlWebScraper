@@ -23,30 +23,21 @@
                     <div class="card-body text-center">
                         <h3>Flask ETL process APP</h3>
                         <hr class="my-5"/>
-                        <form method="POST">
-                            <button class="btn btn-success">Extract</button>
-                        </form>
+                    <div class="row">
+                            <form action="/" method="GET">
+                                <button style="margin-right: 15px; margin-left: 15px" class="btn btn-success">Strona główna</button>
+                            </form>
+{#                            <form action="/extract" method="POST">#}
+{#                                <button style="margin-right: 15px; margin-left: 15px" class="btn btn-success">Ponów Extract</button>#}
+{#                            </form>#}
+                            <form action="/load" method="POST">
+                                <button class="btn btn-success ">Load</button>
+                            </form>
+                    </div>
                         <hr class="my-5"/>
-                        <table id="extract-table" class="display responsvive text-left mt-5" style="width: 100%">
-                            <thead>
-                                <tr>
-                                    <th>MIASTO</th>
-                                    <th>POKOJE</th>
-                                    <th>CENA</th>
-                                    <th>POWIERZCHNIA</th>
-                                    <th>CENA ZA MKW</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 {% if request.method == 'POST' %}
-                                    {% for row in transformed %}
-                                        <tr>
-                                            <td>{{ row.location }}</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    {% endfor %}
+                            <div class="mt-4">Dane zostały poddane operacji Transform, wybierz Strone główną aby ponowić krok 'Extract' lub 'Load' aby załadować dane do bazy, oraz zobaczyć wyniki.</div>
                                 {% endif %}
                             </tbody>
                         </table>
@@ -63,5 +54,5 @@
             </div>
         </div>
     </div>
-</html>
+</body></html>
 </body>

@@ -24,7 +24,10 @@
                         <h3>Flask ETL process APP</h3>
                         <hr class="my-5"/>
                         <form action="/extract" method="POST" role="form">
-                            <button type="submit" class="btn btn-success">Extract</button>
+                            <div class="row">
+                            <button type="submit" style="margin-right: 15px; margin-left: 15px" class="btn btn-success">Extract</button>
+                            <button type="submit" class="btn btn-success">Full ETL</button>
+                            </div>
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1">Wpisz ilość stron do ekstrakcji</label>
                                 <input type="text" class="form-control" name="pages" placeholder="Number of pages" required>
