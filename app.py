@@ -28,11 +28,25 @@ class ScrapTable(db.Model):
         self.price = price
         self.area = area
 
+class TransformTable(db.Model):
+    __tablename__ = 'TransformTable'
+    id = db.Column(db.Integer, primary_key=True)
+    location = db.Column(db.String(100))
+    rooms = db.Column(db.Integer)
+    price = db.Column(db.Integer)
+    area = db.Column(db.Float(precision=2))
 
+    def __init__(self, location, rooms, price, area):
+        self.location = location
+        self.rooms = rooms
+        self.price = price
+        self.area = area
 
 @app.route('/', methods=['GET', 'POST'])
 def render_home():
     if request.method == 'GET':
+        db.session.query(ScrapTable).delete()
+        db.session.commit()
         return render_template('main.html')
 
 @app.route('/extract', methods=['GET', 'POST'])
@@ -50,10 +64,7 @@ def extract():
         data = ScrapTable(a, b, c, d)
         db.session.add(data)
         db.session.commit()
-    #     data = ScrapTable(loc, room, price, area)
-    #     db.session.add(data)
-    #     db.session.commit()
-    return render_template('home.html', extracted=scResults, ScrapTable=ScrapTable, db = db)
+    return render_template('home.html', extracted=scResults)
 
 @app.route('/download')
 def download():
