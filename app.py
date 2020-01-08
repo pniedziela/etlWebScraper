@@ -150,7 +150,7 @@ def etl():
                 result_pric.append(int(splited))
             except ValueError:
                 splited_b = splited.replace(',', '.')
-                result_pric.append(splited_b)
+                result_pric.append(int(splited_b))
     # print(result_pric)
 
     # Calculation for area
