@@ -6,7 +6,8 @@ Aplikcja scrapuje/ekstrahuje dane w witryny otodom.pl w postaci ofert wynajmu mi
 są do czasu wykonania operacji Transform. Podczas 'Transform' dane zastają poddane przeobrażeniu, wycięte zostają tylko interesujące 
 częsci oraz zmianie ulega typ danych.
 Przeobrażone dane podczas operacji 'Load' zasilają baze danych gdzie zostają zapisane. Możliwa jest późniejsza aktualizacja danych, 
-ich przechlądanie oraz filtracja. Dostępne są także podstawowe statystyki jak ilość rekordów w bazie danych czy ilość nowo dodanych.
+ich przeglądanie oraz filtracja. Dostępne są także podstawowe statystyki jak ilość rekordów w bazie danych czy ilość nowo dodanych.
+Proces można wykonać w ciągu, tj. ETL bez przechodzenia poszczeólnych etapów.
 
 
 # Instalacja
