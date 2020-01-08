@@ -23,9 +23,14 @@
                     <div class="card-body text-center">
                         <h3>Flask ETL process APP</h3>
                         <hr class="my-5"/>
+                    <div class="row">
                         <form action="/" method="GET">
-                            <button class="btn btn-success">Strona główna</button>
+                            <button style="margin-right: 15px; margin-left: 15px" class="btn btn-success">Strona główna</button>
                         </form>
+                        <form action="/clear" method="GET">
+                            <button class="btn btn-success">Wyczyść dane</button>
+                        </form>
+                    </div>
                         <hr class="my-5"/>
                         <table id="extract-table" class="display responsvive text-left mt-5" style="width: 100%">
                             <thead>
@@ -52,6 +57,11 @@
                         {% if request.method == 'GET' %}
                             <div class="mt-4">Brak danych. Aby uzyskać jakiekolwiek, wybierz "Extract".</div>
                         {% endif %}
+                            {% if counter: %}
+                                <div class="mt-4">Zostało dodanych {{ counter }} nowych rekordów</div>
+                            {% endif %}
+                        <div class="mt-4">Wszystkich rekordów jest {{ all_len }}</div>
+                        <a href="/download_final" class="btn btn-primary">POBIERZ</a>
                         <script type="text/javascript">
                             $(document).ready( function () {
                                 $('#extract-table').DataTable();

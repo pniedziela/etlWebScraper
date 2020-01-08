@@ -60,15 +60,143 @@ def extract():
     pri = [sub['price'] for sub in scResults]
     are = [sub['area'] for sub in scResults]
     roo = [sub['rooms'] for sub in scResults]
+
     for (a, b, c, d) in itertools.zip_longest(loc, roo, pri, are):
-        data = ScrapTable(a, b, c, d)
-        db.session.add(data)
-        db.session.commit()
-    return render_template('home.html', extracted=scResults)
+        record = db.session.query(ScrapTable).filter(ScrapTable.location==a, ScrapTable.rooms==b, ScrapTable.price==c, ScrapTable.area==d).one_or_none()
+        if record:
+            print('Rekord juz istnieje')
+        else:
+            data = ScrapTable(a, b, c, d)
+            db.session.add(data)
+            db.session.commit()
+
+    locations_db = db.session.query(ScrapTable.location).all()
+    rooms_db = db.session.query(ScrapTable.rooms).all()
+    prices_db = db.session.query(ScrapTable.price).all()
+    area_db = db.session.query(ScrapTable.area).all()
+
+    final_results_db = []
+    for index in range(0, len(locations_db)):
+        final_results_db.append({
+            'location': locations_db[index],
+            'rooms': rooms_db[index],
+            'price': prices_db[index],
+            'area': area_db[index]
+        })
+    leng2 = len(locations_db)
+    return render_template('home.html', extracted=final_results_db, leng = leng2)
 
 @app.route('/download')
 def download():
     return send_from_directory('', 'all_offers.csv', as_attachment=True)
+
+@app.route('/clear')
+def clear():
+    db.session.query(TransformTable).delete()
+    db.session.query(ScrapTable).delete()
+    db.session.commit()
+    return render_template('main.html')
+
+
+@app.route('/download_final')
+def download_final():
+    return send_from_directory('', 'all_loaded.csv', as_attachment=True)
+
+@app.route('/etl', methods=['GET', 'POST'])
+def etl():
+    req = request.form
+    pages = int(req.get("pages"))
+    scraper = WebScraper(pages)
+    scraper.run()
+    scResults = scraper.results
+    loc = [sub['location'] for sub in scResults]
+    pri = [sub['price'] for sub in scResults]
+    are = [sub['area'] for sub in scResults]
+    roo = [sub['rooms'] for sub in scResults]
+    for (a, b, c, d) in itertools.zip_longest(loc, roo, pri, are):
+        data = ScrapTable(a, b, c, d)
+        db.session.add(data)
+        db.session.commit()
+
+    locations = db.session.query(ScrapTable.location).all()
+    rooms = db.session.query(ScrapTable.rooms).all()
+    prices = db.session.query(ScrapTable.price).all()
+    area = db.session.query(ScrapTable.area).all()
+    result_loc = []
+    result_room = []
+    result_pric = []
+    result_area = []
+
+    # Calculations for locations
+    for values in locations:
+        for value in values:
+            cutted_value = re.search(': (.*),', value).group(1)
+            result_loc.append(cutted_value)
+    # print(result_loc)
+
+    # Calculations for rooms
+    for values in rooms:
+        for value in values:
+            res = value[0]
+            result_room.append(int(res))
+    # print(result_room)
+
+    # Calculation for price
+
+    for values in prices:
+        for value in values:
+            splited = value.split('z')[0]
+            try:
+                result_pric.append(int(splited))
+            except ValueError:
+                splited_b = splited.replace(',', '.')
+                result_pric.append(splited_b)
+    # print(result_pric)
+
+    # Calculation for area
+    for values in area:
+        for value in values:
+            splited_ar = value.split(' ')[0]
+            splited_re = splited_ar.replace(',', '.')
+            result_area.append(float(splited_re))
+    # print(result_area)
+
+    #Database commit part
+    counter = 0
+    for (x, y, z, b) in itertools.zip_longest(result_loc, result_room, result_pric, result_area):
+        record = db.session.query(TransformTable).filter(TransformTable.location==x, TransformTable.rooms==y, TransformTable.price==z, TransformTable.area==b).one_or_none()
+        if record:
+            print('Rekord juz istnieje')
+        else:
+            counter += 1
+            data = TransformTable(x, y, z, b)
+            db.session.add(data)
+            db.session.commit()
+
+
+    locations_tra = db.session.query(TransformTable.location).all()
+    rooms_tra = db.session.query(TransformTable.rooms).all()
+    prices_tra = db.session.query(TransformTable.price).all()
+    area_tra = db.session.query(TransformTable.area).all()
+
+    final_results = []
+    for index in range(0, len(locations_tra)):
+        final_results.append({
+            'location': locations_tra[index],
+            'rooms': rooms_tra[index],
+            'price': prices_tra[index],
+            'area': area_tra[index]
+        })
+    all_len = len(locations_tra)
+    with open('all_loaded.csv', 'w', encoding='utf-8') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=final_results[0].keys())
+        writer.writeheader()
+
+        for row in final_results:
+            writer.writerow(row)
+
+
+    return render_template('load.html', results=final_results, counter=counter, all_len=all_len)
 
 @app.route('/transform', methods=['GET', 'POST'])
 def transform():
@@ -114,17 +242,20 @@ def transform():
     print(result_area)
 
     #Database commit part
-
+    counter = 0
     for (x, y, z, b) in itertools.zip_longest(result_loc, result_room, result_pric, result_area):
-        if db.session.query(TransformTable).filter_by(location=x, rooms=y, price=z, area=b) == None:
-            print(db.session.query(TransformTable).filter_by(location=x, rooms=y, price=z, area=b))
-            continue
+        record = db.session.query(TransformTable).filter(TransformTable.location == x, TransformTable.rooms == y,
+                                                         TransformTable.price == z,
+                                                         TransformTable.area == b).one_or_none()
+        if record:
+            print('Rekord juz istnieje')
         else:
+            counter += 1
             data = TransformTable(x, y, z, b)
             db.session.add(data)
             db.session.commit()
 
-    return render_template('transform.html')
+    return render_template('transform.html', counter=counter)
 
 
 
@@ -144,8 +275,16 @@ def load():
             'price': prices_tra[index],
             'area': area_tra[index]
         })
+    all_len = len(locations_tra)
+    with open('all_loaded.csv', 'w', encoding='utf-8') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=final_results[0].keys())
+        writer.writeheader()
 
-    return render_template('load.html', results=final_results)
+        for row in final_results:
+            writer.writerow(row)
+
+
+    return render_template('load.html', results=final_results, all_len=all_len)
 
 
 

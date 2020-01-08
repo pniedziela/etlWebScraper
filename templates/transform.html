@@ -38,6 +38,7 @@
                             <tbody>
                                 {% if request.method == 'POST' %}
                             <div class="mt-4">Dane zostały poddane operacji Transform, wybierz Strone główną aby ponowić krok 'Extract' lub 'Load' aby załadować dane do bazy, oraz zobaczyć wyniki.</div>
+                                <div class="mt-4">Pojawiło sie {{ counter }} nowych danych które nie występują w bazie danych, kliknij Load aby dodać do bazy danych</div>
                                 {% endif %}
                             </tbody>
                         </table>

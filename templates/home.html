@@ -46,12 +46,12 @@
                             </thead>
                             <tbody>
                                 {% if request.method == 'POST' %}
-                                    {% for row in extracted %}
+                                    {% for rows in extracted %}
                                         <tr>
-                                            <td>{{ row.location }}</td>
-                                            <td>{{ row.rooms }}</td>
-                                            <td>{{ row.price }}</td>
-                                            <td>{{ row.area }}</td>
+                                            <td>{% for row in rows.location %} {{ row }} {% endfor %}</td>
+                                            <td>{% for row in rows.rooms %} {{ row }} {% endfor %}</td>
+                                            <td>{% for row in rows.price %} {{ row }} {% endfor %}</td>
+                                            <td>{% for row in rows.area %} {{ row }} {% endfor %}</td>
 
                                         </tr>
                                     {% endfor %}
@@ -61,6 +61,8 @@
                         {% if request.method == 'GET' %}
                             <div class="mt-4">Brak danych. Aby uzyskać jakiekolwiek, wybierz "Extract".</div>
                         {% endif %}
+                        <hr class="my-5"/>
+                        <h4>Zostało wyekstrahowanych {{ leng }} rezultatów.</h4>
                         <a href="/download" class="btn btn-primary">POBIERZ</a>
                         <script type="text/javascript">
                             $(document).ready( function () {
@@ -72,5 +74,5 @@
             </div>
         </div>
     </div>
-</html>
+</body></html>
 </body>
