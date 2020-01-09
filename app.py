@@ -5,7 +5,7 @@ from Scraper import *
 from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import itertools
-import re
+from Transform import *
 
 
 app = Flask(__name__)
@@ -122,44 +122,14 @@ def etl():
     rooms = db.session.query(ScrapTable.rooms).all()
     prices = db.session.query(ScrapTable.price).all()
     area = db.session.query(ScrapTable.area).all()
-    result_loc = []
-    result_room = []
-    result_pric = []
-    result_area = []
 
-    # Calculations for locations
-    for values in locations:
-        for value in values:
-            cutted_value = re.search(': (.*),', value).group(1)
-            result_loc.append(cutted_value)
-    # print(result_loc)
+    transformer = TransformClass(locations, rooms, prices, area)
+    transformer.run()
 
-    # Calculations for rooms
-    for values in rooms:
-        for value in values:
-            res = value[0]
-            result_room.append(int(res))
-    # print(result_room)
-
-    # Calculation for price
-
-    for values in prices:
-        for value in values:
-            splited = value.split('z')[0]
-            try:
-                result_pric.append(int(splited))
-            except ValueError:
-                splited_b = splited.replace(',', '.')
-                result_pric.append(int(splited_b))
-    # print(result_pric)
-
-    # Calculation for area
-    for values in area:
-        for value in values:
-            splited_ar = value.split(' ')[0]
-            splited_re = splited_ar.replace(',', '.')
-            result_area.append(float(splited_re))
-    # print(result_area)
+    result_loc = transformer.result_loc
+    result_room = transformer.result_room
+    result_pric = transformer.result_pric
+    result_area = transformer.result_area
 
     #Database commit part
     counter = 0
@@ -206,40 +176,14 @@ def transform():
     rooms = db.session.query(ScrapTable.rooms).all()
     prices = db.session.query(ScrapTable.price).all()
     area = db.session.query(ScrapTable.area).all()
-    result_loc = []
-    result_room = []
-    result_pric = []
-    result_area = []
 
-    # Calculations for locations
-    for values in locations:
-        for value in values:
-            cutted_value = re.search(': (.*),', value).group(1)
-            result_loc.append(cutted_value)
-    print(result_loc)
+    transformer = TransformClass(locations, rooms, prices, area)
+    transformer.run()
 
-    # Calculations for rooms
-    for values in rooms:
-        for value in values:
-            res = value[0]
-            result_room.append(int(res))
-    print(result_room)
-
-    # Calculation for price
-
-    for values in prices:
-        for value in values:
-            splited = value.split('z')[0]
-            result_pric.append(int(splited))
-    print(result_pric)
-
-    # Calculation for area
-    for values in area:
-        for value in values:
-            splited_ar = value.split(' ')[0]
-            splited_re = splited_ar.replace(',', '.')
-            result_area.append(float(splited_re))
-    print(result_area)
+    result_loc = transformer.result_loc
+    result_room = transformer.result_room
+    result_pric = transformer.result_pric
+    result_area = transformer.result_area
 
     #Database commit part
     counter = 0
